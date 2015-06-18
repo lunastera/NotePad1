@@ -12,7 +12,7 @@ public class MemoData extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private static final String TABLE_NAME = "mydata";
     private static final String TITLE = "title";
-    private static final String MEMO ="memo";
+    private static final String MEMO ="memotest";
 
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
