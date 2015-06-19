@@ -1,11 +1,15 @@
 package com.example.era.notepad;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.content.Intent;
@@ -67,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
         //タイトルだけを全て抽出するクエリの発行
         c = db.query(
                 MemoData.MEMO_TABLE,
-                new String[]{MemoData.ID,MemoData.TITLE,MemoData.MEMO},
+                new String[]{MemoData.TITLE,MemoData.MEMO},
                 null,null,null,null,null
         );
 
@@ -81,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
         //上のループでできたデータをセット
         adapter = new ArrayAdapter<> (
                 getApplicationContext(),
-                android.R.layout.simple_list_item_1,
+                R.layout.list_row,
                 arr
         );
 
@@ -94,6 +98,44 @@ public class MainActivity extends ActionBarActivity {
     public void onResume(){
         super.onResume();
         setAdapter();       //さっきのsetAdapterメソッドを呼び出す
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                c.moveToPosition(position);
+                Intent i = new Intent(MainActivity.this, MemoDetailActivity.class);
+                i.putExtra("title", c.getString(c.getColumnIndex(MemoData.TITLE)));
+                i.putExtra("memo", c.getString(c.getColumnIndex(MemoData.MEMO)));
+                startActivity(i);
+            }
+        });
 
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                c.moveToPosition(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("メモの削除");
+                builder.setMessage("このメモを削除してよろしいですか？");
+                builder.setCancelable(false);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.delete(
+                                MemoData.MEMO_TABLE,
+                                MemoData.ID,
+                                new String[]{c.getString(c.getColumnIndex(MemoData.ID))}
+                        );
+                        setAdapter();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.create().show();
+                return true;
+            }
+        });
     }
 }

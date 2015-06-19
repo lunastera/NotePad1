@@ -9,6 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list"
+        android:textColor="@color/bright_foreground_material_dark"
         android:layout_alignParentTop="true" />
 
 </RelativeLayout>

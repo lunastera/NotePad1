@@ -9,7 +9,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/addtitle"
+        android:id="@+id/addTitle"
         android:text=""
         android:hint="タイトルを入力"
         android:layout_alignParentTop="true"
@@ -18,10 +18,9 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText2"
-
+        android:id="@+id/addText"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/addtitle"
+        android:layout_below="@+id/addTitle"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 </RelativeLayout>

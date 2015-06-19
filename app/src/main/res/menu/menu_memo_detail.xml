@@ -9,6 +9,6 @@
         android:title="保存"
         android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="100"
-        app:showAsActivity="ifRoom"
+        app:showAsAction="ifRoom"
         />
 </menu>

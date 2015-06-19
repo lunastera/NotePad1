@@ -1,20 +1,37 @@
 package com.example.era.notepad;
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.ArrayList;
+import android.widget.EditText;
 
 
 public class MemoCreateActivity extends ActionBarActivity {
+
+    private MemoData helper;
+    private SQLiteDatabase db;
+    private ContentValues values;
+    EditText addTitle;
+    EditText addText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_create);
+
+        //
+        addTitle = (EditText)findViewById(R.id.addTitle);
+        addText = (EditText)findViewById(R.id.addText);
+
+        //
+        helper = new MemoData(getApplicationContext());
+        db = helper.getWritableDatabase();
+        values = new ContentValues();
+
     }
 
     @Override
@@ -26,8 +43,18 @@ public class MemoCreateActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
+        if(id==R.id.save){
+            values.put(MemoData.TITLE, addTitle.getText().toString());
+            values.put(MemoData.MEMO, addText.getText().toString());
+            db.insert(
+                    MemoData.MEMO_TABLE,
+                    null,
+                    values
+            );
+            Intent i = new Intent(MemoCreateActivity.this,MainActivity.class);
+            startActivity(i);
+        }
 
 
         if (id == R.id.action_settings) {
