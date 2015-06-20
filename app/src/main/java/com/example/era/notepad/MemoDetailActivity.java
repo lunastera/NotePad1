@@ -5,12 +5,13 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
 
-public class MemoDetailActivity extends ActionBarActivity {
+public class MemoDetailActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private MemoData helper;
     private ContentValues values;
@@ -61,10 +62,6 @@ public class MemoDetailActivity extends ActionBarActivity {
         }else if(id==android.R.id.home){
             //ホーム押されたら画面終了
             finish();
-        }
-
-        if (id == R.id.action_settings) {
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
