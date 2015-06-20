@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
     private ArrayList<String> arr;
     private ListView list;
     private ArrayAdapter<String> adapter;
-    //データベースの参照位置を指定するカーソル
+    //データベースの参照位置を指定するカーソ
     private Cursor c;
 
     @Override
@@ -41,6 +41,47 @@ public class MainActivity extends ActionBarActivity {
 
         //MemoDataを読み書き可能で取得
         db = helper.getWritableDatabase();
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                c.moveToPosition(position);
+                Intent i = new Intent(MainActivity.this, MemoDetailActivity.class);
+                i.putExtra("title", c.getString(c.getColumnIndex(MemoData.TITLE)));
+                i.putExtra("memo", c.getString(c.getColumnIndex(MemoData.MEMO)));
+                i.putExtra("id",c.getString(c.getColumnIndex(MemoData.ID)));
+                startActivity(i);
+            }
+        });
+
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                c.moveToPosition(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("メモの削除");
+                builder.setMessage("このメモを削除してよろしいですか？");
+                builder.setCancelable(false);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.delete(
+                                MemoData.MEMO_TABLE,
+                                MemoData.ID + " = ?",
+                                new String[]{c.getString(c.getColumnIndex(MemoData.ID))}
+                        );
+                        setAdapter();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.create().show();
+                return true;
+            }
+        });
     }
 
 
@@ -65,77 +106,35 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    public void setAdapter(){
-        //一覧として表示するタイトルを格納するリスト
-        arr = new ArrayList<>();
-        //タイトルだけを全て抽出するクエリの発行
-        c = db.query(
-                MemoData.MEMO_TABLE,
-                new String[]{MemoData.TITLE,MemoData.MEMO},
-                null,null,null,null,null
-        );
-
-        //カーソルが最後に到達するまで（データベースの最後まで）ループ
-        while(c.moveToNext()){
-            //カーソルのいる場所にあるタイトルをListに格納
-            arr.add(c.getString(c.getColumnIndexOrThrow(MemoData.TITLE)));
-        }
-
-        //リストビューにつけるアダプターの設定
-        //上のループでできたデータをセット
-        adapter = new ArrayAdapter<> (
-                getApplicationContext(),
-                R.layout.list_row,
-                arr
-        );
-
-        list.setAdapter(adapter);
-
-    }
-
     //他の画面から帰ってきたときに呼ばれるメソッド
     //onCreate　は最初に作成された１回のみ
     public void onResume(){
         super.onResume();
         setAdapter();       //さっきのsetAdapterメソッドを呼び出す
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                c.moveToPosition(position);
-                Intent i = new Intent(MainActivity.this, MemoDetailActivity.class);
-                i.putExtra("title", c.getString(c.getColumnIndex(MemoData.TITLE)));
-                i.putExtra("memo", c.getString(c.getColumnIndex(MemoData.MEMO)));
-                startActivity(i);
-            }
-        });
+    }
 
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                c.moveToPosition(position);
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("メモの削除");
-                builder.setMessage("このメモを削除してよろしいですか？");
-                builder.setCancelable(false);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        db.delete(
-                                MemoData.MEMO_TABLE,
-                                MemoData.ID,
-                                new String[]{c.getString(c.getColumnIndex(MemoData.ID))}
-                        );
-                        setAdapter();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                builder.create().show();
-                return true;
-            }
-        });
+    public void setAdapter(){
+        //一覧として表示するタイトルを格納するリスト
+        arr = new ArrayList<>();
+        //クエリの発行
+        c = db.query(
+                MemoData.MEMO_TABLE,
+                new String[]{MemoData.ID,MemoData.TITLE,MemoData.MEMO},
+                null, null, null, null, null
+        );
+        //カーソルが最後に到達するまで（データベースの最後まで）ループ
+        while (c.moveToNext()) {
+            //カーソルのいる場所にあるタイトルをListに格納
+            arr.add(c.getString(c.getColumnIndexOrThrow(MemoData.TITLE)));
+        }
+        //リストビューにつけるアダプターの設定
+        //上のループでできたデータをセット
+        adapter = new ArrayAdapter<>(
+                getApplicationContext(),
+                R.layout.list_row,
+                arr
+        );
+        list.setAdapter(adapter);
+
     }
 }

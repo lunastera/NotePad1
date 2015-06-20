@@ -24,21 +24,15 @@ public class MemoData extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
                 "create table "+MEMO_TABLE+"("
-                +ID+" integer primary key,"
+                +ID+" integer primary key autoincrement,"
                 +TITLE+" text,"
                 +MEMO+" text);"
         );
     }
     @Override
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
-        db.execSQL(
-                "drop table if exists "+MEMO_TABLE
-        );
+        db.execSQL("drop table if exists "+MEMO_TABLE);
         onCreate(db);
     }
 
-    @Override
-    public void onOpen(SQLiteDatabase db){
-        super.onOpen(db);
-    }
 }

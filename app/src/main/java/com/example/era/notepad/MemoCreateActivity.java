@@ -15,14 +15,14 @@ public class MemoCreateActivity extends ActionBarActivity {
     private MemoData helper;
     private SQLiteDatabase db;
     private ContentValues values;
-    EditText addTitle;
-    EditText addText;
+    private EditText addTitle;
+    private EditText addText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_create);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //
         addTitle = (EditText)findViewById(R.id.addTitle);
         addText = (EditText)findViewById(R.id.addText);
@@ -52,13 +52,10 @@ public class MemoCreateActivity extends ActionBarActivity {
                     null,
                     values
             );
-            Intent i = new Intent(MemoCreateActivity.this,MainActivity.class);
-            startActivity(i);
-        }
-
-
-        if (id == R.id.action_settings) {
+            finish();
             return true;
+        }else if(id==android.R.id.home){
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

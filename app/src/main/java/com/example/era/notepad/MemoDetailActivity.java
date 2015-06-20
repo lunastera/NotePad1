@@ -14,8 +14,9 @@ public class MemoDetailActivity extends ActionBarActivity {
     private SQLiteDatabase db;
     private MemoData helper;
     private ContentValues values;
-    EditText saveTitle;
-    EditText saveText;
+    private EditText saveTitle;
+    private EditText saveText;
+    public static String memoid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +48,13 @@ public class MemoDetailActivity extends ActionBarActivity {
             db.update(
                     MemoData.MEMO_TABLE,
                     values,
-                    null,null
+                    MemoData.ID+"="+memoid,
+                    null
             );
-            Intent i = new Intent(MemoDetailActivity.this,MainActivity.class);
-            startActivity(i);
+            finish();
+            return true;
+        }else if(id==android.R.id.home){
+            finish();
         }
 
         //noinspection SimplifiableIfStatement
@@ -60,10 +64,11 @@ public class MemoDetailActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public void OnResume(){
+    public void onResume(){
         super.onResume();
         Intent i = getIntent();
         saveTitle.setText(i.getStringExtra("title"));
         saveText.setText(i.getStringExtra("memo"));
+        memoid=i.getStringExtra("id");
     }
 }
