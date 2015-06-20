@@ -16,7 +16,8 @@ public class MemoDetailActivity extends ActionBarActivity {
     private ContentValues values;
     private EditText saveTitle;
     private EditText saveText;
-    public static String memoid;
+    //メモID照合用
+    public static String memoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +44,25 @@ public class MemoDetailActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id==R.id.save){
+            // メモタイトルを保存するための箱に入れる
             values.put(MemoData.TITLE,saveTitle.getText().toString());
+            // メモ内容を保存するための箱に入れる
             values.put(MemoData.MEMO,saveText.getText().toString());
+            //データベースの更新　第一引数がテーブル名　第二引数が値　第3,4引数が条件指定
             db.update(
                     MemoData.MEMO_TABLE,
                     values,
-                    MemoData.ID+"="+memoid,
+                    MemoData.ID+"="+memoId,
                     null
             );
+            //メインに帰る
             finish();
             return true;
         }else if(id==android.R.id.home){
+            //ホーム押されたら画面終了
             finish();
         }
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -67,8 +72,9 @@ public class MemoDetailActivity extends ActionBarActivity {
     public void onResume(){
         super.onResume();
         Intent i = getIntent();
+        //それぞれ送られてきたデータをセット、格納する。
         saveTitle.setText(i.getStringExtra("title"));
         saveText.setText(i.getStringExtra("memo"));
-        memoid=i.getStringExtra("id");
+        memoId=i.getStringExtra("id");
     }
 }
